@@ -1,7 +1,22 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+// Lazy initialization to avoid build-time errors
+let _resend: Resend | null = null;
+
+function getResend(): Resend {
+  if (!_resend) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      throw new Error('Missing RESEND_API_KEY environment variable');
+    }
+    _resend = new Resend(apiKey);
+  }
+  return _resend;
+}
+
+function getAppUrl(): string {
+  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+}
 
 interface DownloadLink {
   photoId: string;
@@ -15,9 +30,10 @@ export async function sendGalleryAccessEmail(
   cruiseName: string,
   tableNumber: string
 ): Promise<void> {
+  const APP_URL = getAppUrl();
   const galleryUrl = `${APP_URL}/gallery/${accessCode}`;
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: 'Cruise Photos <photos@yourdomain.com>',
     to: email,
     subject: `Your ${cruiseName} Photos Are Ready!`,
@@ -56,6 +72,7 @@ export async function sendOrderConfirmationEmail(
   downloads: DownloadLink[],
   totalAmount: number
 ): Promise<void> {
+  const APP_URL = getAppUrl();
   const downloadLinksHtml = downloads
     .map(
       (d, i) => `
@@ -68,7 +85,7 @@ export async function sendOrderConfirmationEmail(
     )
     .join('');
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: 'Cruise Photos <photos@yourdomain.com>',
     to: email,
     subject: 'Your Cruise Photos - Download Ready!',
@@ -108,6 +125,7 @@ export async function sendDownloadRecoveryEmail(
   email: string,
   downloads: DownloadLink[]
 ): Promise<void> {
+  const APP_URL = getAppUrl();
   const downloadLinksHtml = downloads
     .map(
       (d, i) => `
@@ -120,7 +138,7 @@ export async function sendDownloadRecoveryEmail(
     )
     .join('');
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: 'Cruise Photos <photos@yourdomain.com>',
     to: email,
     subject: 'Your Cruise Photos - Download Links',

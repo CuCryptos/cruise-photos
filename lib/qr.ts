@@ -1,10 +1,13 @@
 import QRCode from 'qrcode';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+// Lazy-loaded to avoid build-time env var issues
+function getAppUrl(): string {
+  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+}
 
 // Generate QR code as data URL for a table's gallery
 export async function generateTableQRCode(accessCode: string): Promise<string> {
-  const url = `${APP_URL}/gallery/${accessCode}`;
+  const url = `${getAppUrl()}/gallery/${accessCode}`;
   return QRCode.toDataURL(url, {
     width: 300,
     margin: 2,
@@ -17,7 +20,7 @@ export async function generateTableQRCode(accessCode: string): Promise<string> {
 
 // Generate QR code as SVG string
 export async function generateTableQRCodeSVG(accessCode: string): Promise<string> {
-  const url = `${APP_URL}/gallery/${accessCode}`;
+  const url = `${getAppUrl()}/gallery/${accessCode}`;
   return QRCode.toString(url, {
     type: 'svg',
     width: 300,

@@ -1,12 +1,15 @@
-const CLOVER_BASE_URL =
-  process.env.CLOVER_ENVIRONMENT === 'production'
+// Lazy-loaded URLs to avoid build-time env var issues
+function getCloverBaseUrl(): string {
+  return process.env.CLOVER_ENVIRONMENT === 'production'
     ? 'https://api.clover.com'
     : 'https://sandbox.dev.clover.com';
+}
 
-const CLOVER_ECOMMERCE_URL =
-  process.env.CLOVER_ENVIRONMENT === 'production'
+function getCloverEcommerceUrl(): string {
+  return process.env.CLOVER_ENVIRONMENT === 'production'
     ? 'https://scl.clover.com'
     : 'https://scl-sandbox.dev.clover.com';
+}
 
 interface CloverOrderItem {
   name: string;
@@ -41,7 +44,7 @@ export async function createOrder(
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const response = await fetch(
-    `${CLOVER_BASE_URL}/v3/merchants/${merchantId}/orders`,
+    `${getCloverBaseUrl()}/v3/merchants/${merchantId}/orders`,
     {
       method: 'POST',
       headers: {
@@ -66,7 +69,7 @@ export async function createOrder(
   // Add line items
   for (const item of items) {
     await fetch(
-      `${CLOVER_BASE_URL}/v3/merchants/${merchantId}/orders/${order.id}/line_items`,
+      `${getCloverBaseUrl()}/v3/merchants/${merchantId}/orders/${order.id}/line_items`,
       {
         method: 'POST',
         headers: {
@@ -94,7 +97,7 @@ export async function processPayment(
 ): Promise<ChargeResult> {
   const privateKey = process.env.CLOVER_ECOMMERCE_PRIVATE_KEY;
 
-  const response = await fetch(`${CLOVER_ECOMMERCE_URL}/v1/charges`, {
+  const response = await fetch(`${getCloverEcommerceUrl()}/v1/charges`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${privateKey}`,
@@ -140,7 +143,7 @@ export async function getOrderStatus(orderId: string): Promise<CloverOrder> {
   const apiKey = process.env.CLOVER_API_KEY;
 
   const response = await fetch(
-    `${CLOVER_BASE_URL}/v3/merchants/${merchantId}/orders/${orderId}`,
+    `${getCloverBaseUrl()}/v3/merchants/${merchantId}/orders/${orderId}`,
     {
       headers: {
         Authorization: `Bearer ${apiKey}`,
