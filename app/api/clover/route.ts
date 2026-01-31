@@ -5,6 +5,8 @@ import { sendOrderConfirmationEmail } from '@/lib/email';
 import { v4 as uuidv4 } from 'uuid';
 import type { Photo, Order, OrderItem } from '@/types/database';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   const supabase = createServerClient();
 

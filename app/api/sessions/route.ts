@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/db';
 import { generateAccessCode } from '@/lib/qr';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const supabase = createServerClient();
 
