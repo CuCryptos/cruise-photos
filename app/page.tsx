@@ -1,100 +1,153 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { PhotoIcon, QrCodeIcon, CreditCardIcon } from '@heroicons/react/24/outline';
+import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+
+export default function HomePage() {
+  const router = useRouter();
+  const [accessCode, setAccessCode] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (accessCode.trim()) {
+      router.push(`/gallery/${accessCode.trim().toUpperCase()}`);
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800">
+      {/* Hero Section */}
+      <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          Your Cruise Memories
+        </h1>
+        <p className="text-xl text-blue-100 mb-8">
+          View and purchase your professional photos from tonight&apos;s dinner cruise
+        </p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        {/* Access Code Form */}
+        <Card className="max-w-md mx-auto">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter Your Access Code
+              </label>
+              <Input
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
+                placeholder="e.g., ABC123"
+                className="text-center text-2xl tracking-widest"
+                maxLength={6}
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                Your access code is on the card at your table
+              </p>
+            </div>
+            <Button type="submit" className="w-full" size="lg">
+              View My Photos
+            </Button>
+          </form>
+        </Card>
+      </div>
+
+      {/* How It Works */}
+      <div className="bg-white py-16">
+        <div className="max-w-4xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center text-gray-900 mb-12">
+            How It Works
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <QrCodeIcon className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                1. Scan or Enter Code
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Scan the QR code on your table card or enter the access code above
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <PhotoIcon className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                2. Browse & Select
+              </h3>
+              <p className="text-gray-600 text-sm">
+                View all the photos from your table and add your favorites to cart
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CreditCardIcon className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                3. Purchase & Download
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Pay securely and receive instant download links via email
+              </p>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </div>
+
+      {/* Pricing */}
+      <div className="bg-gray-50 py-16">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Simple Pricing
+          </h2>
+          <p className="text-gray-600 mb-8">
+            High-resolution digital downloads you can print, share, and treasure forever
+          </p>
+
+          <Card className="max-w-sm mx-auto">
+            <div className="text-center">
+              <p className="text-5xl font-bold text-blue-600">$14.99</p>
+              <p className="text-gray-500">per photo</p>
+              <ul className="mt-6 space-y-2 text-left">
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 mr-2">✓</span>
+                  High-resolution digital file
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Professionally edited
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Instant download
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="text-green-500 mr-2">✓</span>
+                  Print at any size
+                </li>
+              </ul>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-400 py-8">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <p className="text-sm">
+            &copy; {new Date().getFullYear()} Cruise Photos. All rights reserved.
+          </p>
+          <p className="text-xs mt-2">
+            Photos are available for 30 days after your cruise.
+          </p>
+        </div>
       </footer>
     </div>
   );
